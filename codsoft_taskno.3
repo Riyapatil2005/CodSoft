@@ -1,0 +1,118 @@
+import java.util.Scanner;
+import java.text.DecimalFormat;
+
+// Class to represent the user's bank account
+class BankAccount {
+    private String accountHolder;
+    private double balance;
+    private static final DecimalFormat df = new DecimalFormat("0.00");
+
+    public BankAccount(String accountHolder, double initialBalance) {
+        this.accountHolder = accountHolder;
+        this.balance = initialBalance;
+    }
+
+    public String deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            return String.format("Successfully deposited $%s. New balance: $%s.", df.format(amount), df.format(balance));
+        } else {
+            return "Error: Deposit amount must be positive.";
+        }
+    }
+
+    public String withdraw(double amount) {
+        if (amount > 0) {
+            if (amount <= balance) {
+                balance -= amount;
+                return String.format("Successfully withdrew $%s. Remaining balance: $%s.", df.format(amount), df.format(balance));
+            } else {
+                return "Error: Insufficient funds for this transaction.";
+            }
+        } else {
+            return "Error: Withdrawal amount must be positive.";
+        }
+    }
+
+    public String checkBalance() {
+        return String.format("Account Holder: %s\nAvailable Balance: $%s", accountHolder, df.format(balance));
+    }
+}
+
+// Class to represent the ATM machine
+class ATM {
+    private BankAccount bankAccount;
+
+    public ATM(BankAccount bankAccount) {
+        this.bankAccount = bankAccount;
+    }
+
+    private void displayMenu() {
+        System.out.println("\n============================");
+        System.out.println("       ATM Interface        ");
+        System.out.println("============================");
+        System.out.println("1. Withdraw Money");
+        System.out.println("2. Deposit Money");
+        System.out.println("3. Check Balance");
+        System.out.println("4. Exit");
+        System.out.println("============================");
+    }
+
+    public void run() {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            displayMenu();
+            System.out.print("Select an option (1-4): ");
+
+            if (!scanner.hasNextInt()) {
+                System.out.println("Error: Please enter a valid option.");
+                scanner.next();
+                continue;
+            }
+
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter withdrawal amount: ");
+                    if (scanner.hasNextDouble()) {
+                        double withdrawAmount = scanner.nextDouble();
+                        System.out.println(bankAccount.withdraw(withdrawAmount));
+                    } else {
+                        System.out.println("Error: Please enter a valid amount.");
+                        scanner.next();
+                    }
+                    break;
+                case 2:
+                    System.out.print("Enter deposit amount: ");
+                    if (scanner.hasNextDouble()) {
+                        double depositAmount = scanner.nextDouble();
+                        System.out.println(bankAccount.deposit(depositAmount));
+                    } else {
+                        System.out.println("Error: Please enter a valid amount.");
+                        scanner.next();
+                    }
+                    break;
+                case 3:
+                    System.out.println(bankAccount.checkBalance());
+                    break;
+                case 4:
+                    System.out.println("Thank you for using our ATM services. Goodbye!");
+                    scanner.close();
+                    return;
+                default:
+                    System.out.println("Error: Invalid selection. Please choose an option between 1 and 4.");
+            }
+        }
+    }
+}
+
+// Main class to run the program
+public class ATMInterface {
+    public static void main(String[] args) {
+        BankAccount userAccount = new BankAccount("John Doe", 1000);
+        ATM atm = new ATM(userAccount);
+        atm.run();
+    }
+}
