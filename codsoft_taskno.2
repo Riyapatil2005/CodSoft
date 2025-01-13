@@ -1,0 +1,86 @@
+import java.util.Scanner;
+
+public class StudentGradeCalculator {
+
+    // ANSI escape codes for colored output (works in most Unix/Linux/macOS terminals)
+    private static final String RESET = "\u001B[0m";
+    private static final String GREEN = "\u001B[32m";
+    private static final String RED = "\u001B[31m";
+    private static final String YELLOW = "\u001B[33m";
+    private static final String BLUE = "\u001B[34m";
+    private static final String CYAN = "\u001B[36m";
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Get the number of subjects
+        System.out.print(CYAN + "Enter the number of subjects: " + RESET);
+        int numberOfSubjects = scanner.nextInt();
+
+        // Validate the number of subjects
+        if (numberOfSubjects <= 0) {
+            System.out.println(RED + "Invalid number of subjects. Please enter a number greater than 0." + RESET);
+            return;
+        }
+
+        double totalMarks = 0;
+
+        // Input marks for each subject
+        System.out.println(GREEN + "\nEnter the marks obtained in each subject (out of 100):" + RESET);
+
+        for (int i = 1; i <= numberOfSubjects; i++) {
+            System.out.print(YELLOW + "Subject " + i + ": " + RESET);
+            double marks = getValidMarks(scanner);
+
+            totalMarks += marks;
+        }
+
+        // Calculate average percentage
+        double averagePercentage = (totalMarks / (numberOfSubjects * 100)) * 100;
+
+        // Calculate grade based on the average percentage
+        String grade = getGrade(averagePercentage);
+
+        // Display results with formatting
+        System.out.println(BLUE + "\n--- Final Results ---" + RESET);
+        System.out.println("Total Marks: " + totalMarks + " / " + (numberOfSubjects * 100));
+        System.out.println("Average Percentage: " + String.format("%.2f", averagePercentage) + "%");
+        System.out.println("Grade: " + grade);
+
+        scanner.close();
+    }
+
+    // Method to get valid marks input (between 0 and 100)
+    public static double getValidMarks(Scanner scanner) {
+        double marks;
+        while (true) {
+            marks = scanner.nextDouble();
+            if (marks >= 0 && marks <= 100) {
+                break;
+            } else {
+                System.out.println(RED + "Invalid input. Marks should be between 0 and 100." + RESET);
+                System.out.print(YELLOW + "Please enter valid marks: " + RESET);
+            }
+        }
+        return marks;
+    }
+
+    // Method to determine grade based on average percentage
+    public static String getGrade(double percentage) {
+        if (percentage >= 90) {
+            return "A+";
+        } else if (percentage >= 80) {
+            return "A";
+        } else if (percentage >= 70) {
+            return "B+";
+        } else if (percentage >= 60) {
+            return "B";
+        } else if (percentage >= 50) {
+            return "C";
+        } else if (percentage >= 40) {
+            return "D";
+        } else {
+            return "F";  // Fail grade
+        }
+    }
+}
